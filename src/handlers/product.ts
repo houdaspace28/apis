@@ -28,20 +28,25 @@ export const getOneProduct = async (req,res)=>{
     res.json({data:product})
 }
 
-export const createNewProduct = async (req,res) => {
-   const name = req.body.name
-   const user = await prisma.user.findUnique({
-        where:{
-            id: req.user.id
-        }
-    })
-   const product = await prisma.product.create({
-       data:{
-           name,
-           belongsToId:user.id
-       }
-   })
-   res.json({data:product})
+export const createNewProduct = async (req,res,next) => {
+    try{
+
+        const name = req.body.name
+        const user = await prisma.user.findUnique({
+             where:{
+                 id: req.user.id
+             }
+         })
+        const product = await prisma.product.create({
+            data:{
+                name,
+                belongsToId:user.id
+            }
+        })
+        res.json({data:product})
+    }catch(e){
+        next()
+    }
 }
 
 export const updateProduct = async (req,res) =>{
